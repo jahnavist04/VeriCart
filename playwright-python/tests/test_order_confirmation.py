@@ -25,6 +25,6 @@ def test_successful_checkout(page):
 
     # Verify order confirmation
     confirmation = page.locator(".complete-header")
+    confirmation.wait_for(state="visible", timeout=10000)
 
-    assert confirmation.is_visible()
     assert confirmation.inner_text() == "Thank you for your order!"
