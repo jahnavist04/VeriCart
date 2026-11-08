@@ -4,7 +4,8 @@ def test_products_are_displayed(page):
     page.locator("#user-name").fill("standard_user")
     page.locator("#password").fill("secret_sauce")
     page.locator("#login-button").click()
-
+    
+    page.locator(".inventory_item").first.wait_for(state="visible")
     products = page.locator(".inventory_item")
 
     assert products.count() > 0
