@@ -1,16 +1,16 @@
+
+from pages.login_page import LoginPage
+from pages.inventory_page import InventoryPage
+
+
 def test_add_product_to_cart(page):
-    page.goto("https://www.saucedemo.com/")
+    login_page = LoginPage(page)
+    login_page.open()
+    login_page.login("standard_user", "secret_sauce")
 
-    # Login
-    page.locator("#user-name").fill("standard_user")
-    page.locator("#password").fill("secret_sauce")
-    page.locator("#login-button").click()
+    inventory_page = InventoryPage(page)
+    inventory_page.add_product_to_cart("add-to-cart-sauce-labs-backpack")
 
-    # Add the first product to cart
-    page.locator(".inventory_item button").first.click()
+    cart_count = inventory_page.get_cart_count()
 
-    # Verify cart badge
-    cart_badge = page.locator(".shopping_cart_badge")
-
-    assert cart_badge.is_visible()
-    assert cart_badge.inner_text() == "1"
+    assert cart_count == "1"
