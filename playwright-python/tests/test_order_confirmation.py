@@ -1,30 +1,37 @@
-def test_successful_checkout(page):
-    page.goto("https://www.saucedemo.com/")
 
+from pages.login_page import LoginPage
+from pages.inventory_page import InventoryPage
+from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutPage
+
+
+def test_successful_checkout(page):
     # Login
-    page.locator("#user-name").fill("standard_user")
-    page.locator("#password").fill("secret_sauce")
-    page.locator("#login-button").click()
+    login_page = LoginPage(page)
+    login_page.open()
+    login_page.login("standard_user", "secret_sauce")
 
     # Add product to cart
-    page.locator(".inventory_item button").first.click()
+    inventory_page = InventoryPage(page)
+    inventory_page.add_product_to_cart("add-to-cart-sauce-labs-backpack")
+    inventory_page.open_cart()
 
-    # Open cart and checkout
-    page.locator(".shopping_cart_link").click()
-    page.locator("#checkout").click()
+    # Checkout
+    cart_page = CartPage(page)
+    cart_page.checkout()
 
     # Enter customer information
-    page.locator("#first-name").fill("Jahnavi")
-    page.locator("#last-name").fill("ST")
-    page.locator("#postal-code").fill("560001")
+    checkout_page = CheckoutPage(page)
+    checkout_page.enter_customer_details(
+        "Jahnavi", "ST", "560001"
+    )
 
-    page.locator("#continue").click()
-
-    # Finish order
-    page.locator("#finish").click()
+    checkout_page.continue_checkout()
+    checkout_page.finish_checkout()
 
     # Verify order confirmation
-    confirmation = page.locator(".complete-header")
-    confirmation.wait_for(state="visible", timeout=10000)
+    checkout_page.confirmation_message.wait_for(
+        state="visible", timeout=10000
+    )
 
-    assert confirmation.inner_text() == "Thank you for your order!"
+    assert checkout_page.get_confirmation_message() == "Thank you for your order!"
