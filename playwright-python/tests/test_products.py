@@ -1,11 +1,17 @@
-def test_products_are_displayed(page):
-    page.goto("https://www.saucedemo.com/")
 
-    page.locator("#user-name").fill("standard_user")
-    page.locator("#password").fill("secret_sauce")
-    page.locator("#login-button").click()
-    
+from pages.login_page import LoginPage
+from pages.inventory_page import InventoryPage
+
+
+def test_products_are_displayed(page):
+    login_page = LoginPage(page)
+    login_page.open()
+    login_page.login("standard_user", "secret_sauce")
+
+    inventory_page = InventoryPage(page)
+
     page.locator(".inventory_item").first.wait_for(state="visible")
+
     products = page.locator(".inventory_item")
 
     assert products.count() > 0
