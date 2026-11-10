@@ -1,25 +1,24 @@
+
+from pages.login_page import LoginPage
+from pages.inventory_page import InventoryPage
+from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutPage
+
+
 def test_checkout_required_fields(page):
-    page.goto("https://www.saucedemo.com/")
+    login_page = LoginPage(page)
+    login_page.open()
+    login_page.login("standard_user", "secret_sauce")
 
-    # Login
-    page.locator("#user-name").fill("standard_user")
-    page.locator("#password").fill("secret_sauce")
-    page.locator("#login-button").click()
+    inventory_page = InventoryPage(page)
+    inventory_page.add_product_to_cart("add-to-cart-sauce-labs-backpack")
+    inventory_page.open_cart()
 
-    # Add a product
-    page.locator(".inventory_item button").first.click()
+    cart_page = CartPage(page)
+    cart_page.checkout()
 
-    # Open cart
-    page.locator(".shopping_cart_link").click()
+    checkout_page = CheckoutPage(page)
+    checkout_page.continue_checkout()
 
-    # Proceed to checkout
-    page.locator("#checkout").click()
-
-    # Continue without entering customer details
-    page.locator("#continue").click()
-
-    # Verify required field error
-    error_message = page.locator("[data-test='error']")
-
-    assert error_message.is_visible()
-    assert "First Name is required" in error_message.inner_text()
+    assert checkout_page.error_message.is_visible()
+    assert "First Name is required" in checkout_page.get_error_message()
