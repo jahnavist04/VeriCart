@@ -1,20 +1,21 @@
+
+from pages.login_page import LoginPage
+from pages.inventory_page import InventoryPage
+from pages.cart_page import CartPage
+
+
 def test_remove_product_from_cart(page):
-    page.goto("https://www.saucedemo.com/")
+    login_page = LoginPage(page)
+    login_page.open()
+    login_page.login("standard_user", "secret_sauce")
 
-    # Login
-    page.locator("#user-name").fill("standard_user")
-    page.locator("#password").fill("secret_sauce")
-    page.locator("#login-button").click()
+    inventory_page = InventoryPage(page)
+    inventory_page.add_product_to_cart("add-to-cart-sauce-labs-backpack")
+    inventory_page.open_cart()
 
-    # Add first product
-    page.locator(".inventory_item button").first.click()
+    cart_page = CartPage(page)
+    cart_page.remove_product("remove-sauce-labs-backpack")
 
-    # Open cart
-    page.locator(".shopping_cart_link").click()
-
-    # Remove product
-    page.locator(".cart_item button").click()
-
-    # Verify cart is empty
-    assert page.locator(".cart_item").count() == 0
+    assert cart_page.get_cart_items_count() == 0
     assert page.locator(".shopping_cart_badge").count() == 0
+
