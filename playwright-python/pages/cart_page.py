@@ -19,3 +19,9 @@ class CartPage:
 
     def continue_shopping(self):
         self.continue_shopping_button.click()
+
+    def get_product_name(self):
+        return self.page.locator(".cart_item .inventory_item_name").inner_text()
+
+    def get_product_price(self):
+        return self.page.locator(".cart_item .inventory_item_price").inner_text()
