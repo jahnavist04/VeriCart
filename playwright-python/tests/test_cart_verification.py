@@ -1,27 +1,24 @@
+
+from pages.login_page import LoginPage
+from pages.inventory_page import InventoryPage
+from pages.cart_page import CartPage
+
+
 def test_cart_contains_added_product(page):
-    page.goto("https://www.saucedemo.com/")
+    login_page = LoginPage(page)
+    login_page.open()
+    login_page.login("standard_user", "secret_sauce")
 
-    # Login
-    page.locator("#user-name").fill("standard_user")
-    page.locator("#password").fill("secret_sauce")
-    page.locator("#login-button").click()
-
-    # Wait for products to load
+    inventory_page = InventoryPage(page)
     page.locator(".inventory_item").first.wait_for()
 
-    # Capture first product details
-    product_name = page.locator(".inventory_item_name").first.inner_text()
-    product_price = page.locator(".inventory_item_price").first.inner_text()
+    product_name = inventory_page.get_first_product_name()
+    product_price = inventory_page.get_first_product_price()
 
-    # Add product to cart
-    page.locator(".inventory_item button").first.click()
+    inventory_page.add_product_to_cart("add-to-cart-sauce-labs-backpack")
+    inventory_page.open_cart()
 
-    # Open cart
-    page.locator(".shopping_cart_link").click()
+    cart_page = CartPage(page)
 
-    # Select product specifically inside cart
-    cart_product = page.locator(".cart_item .inventory_item_name")
-    cart_price = page.locator(".cart_item .inventory_item_price")
-
-    assert cart_product.inner_text() == product_name
-    assert cart_price.inner_text() == product_price
+    assert cart_page.get_product_name() == product_name
+    assert cart_page.get_product_price() == product_price

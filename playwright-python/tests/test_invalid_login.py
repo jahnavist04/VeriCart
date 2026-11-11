@@ -1,12 +1,12 @@
+
+from pages.login_page import LoginPage
+
+
 def test_invalid_login(page):
-    page.goto("https://www.saucedemo.com/")
+    login_page = LoginPage(page)
 
-    page.locator("#user-name").fill("wrong_user")
-    page.locator("#password").fill("wrong_password")
+    login_page.open()
+    login_page.login("wrong_user", "wrong_password")
 
-    page.locator("#login-button").click()
-
-    error_message = page.locator("[data-test='error']")
-
-    assert error_message.is_visible()
-    assert "Username and password do not match" in error_message.inner_text()
+    assert login_page.error_message.is_visible()
+    assert "Username and password do not match" in login_page.get_error_message()
