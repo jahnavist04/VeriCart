@@ -25,3 +25,6 @@ class CheckoutPage:
 
     def get_confirmation_message(self):
         return self.confirmation_message.inner_text()
+
+    def get_error_message(self):
+        return self.error_message.inner_text()
